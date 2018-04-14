@@ -4,7 +4,7 @@ import Module from './Module';
 import finalisers from './finalisers/index';
 import getExportMode from './utils/getExportMode';
 import getIndentString from './utils/getIndentString';
-import transformBundle from './utils/transformBundle';
+import transformChunk from './utils/transformBundle';
 import collapseSourcemaps from './utils/collapseSourcemaps';
 import error from './utils/error';
 import { normalize, resolve, extname, dirname, relative, basename } from './utils/path';
@@ -1042,9 +1042,9 @@ export default class Chunk {
 		timeEnd('render format', 3);
 
 		let map: SourceMap = null;
-		const bundleSourcemapChain: RawSourceMap[] = [];
+		const chunkSourcemapChain: RawSourceMap[] = [];
 
-		return transformBundle(prevCode, this.graph.plugins, bundleSourcemapChain, options).then(
+		return transformChunk(prevCode, this.graph.plugins, chunkSourcemapChain, options).then(
 			(code: string) => {
 				if (options.sourcemap) {
 					timeStart('sourcemap', 3);
@@ -1057,13 +1057,7 @@ export default class Chunk {
 						this.graph.plugins.find(plugin => Boolean(plugin.transform || plugin.transformBundle))
 					) {
 						let decodedMap = magicString.generateDecodedMap({});
-						map = collapseSourcemaps(
-							this,
-							file,
-							decodedMap,
-							this.usedModules,
-							bundleSourcemapChain
-						);
+						map = collapseSourcemaps(this, file, decodedMap, this.usedModules, chunkSourcemapChain);
 					} else {
 						map = magicString.generateMap({ file, includeContent: true });
 					}
