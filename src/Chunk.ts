@@ -4,7 +4,7 @@ import Module from './Module';
 import finalisers from './finalisers/index';
 import getExportMode from './utils/getExportMode';
 import getIndentString from './utils/getIndentString';
-import transformChunk from './utils/transformBundle';
+import transformChunk from './utils/transformChunk';
 import collapseSourcemaps from './utils/collapseSourcemaps';
 import error from './utils/error';
 import { normalize, resolve, extname, dirname, relative, basename } from './utils/path';
@@ -1044,7 +1044,7 @@ export default class Chunk {
 		let map: SourceMap = null;
 		const chunkSourcemapChain: RawSourceMap[] = [];
 
-		return transformChunk(prevCode, this.graph.plugins, chunkSourcemapChain, options).then(
+		return transformChunk(this.graph, prevCode, chunkSourcemapChain, options).then(
 			(code: string) => {
 				if (options.sourcemap) {
 					timeStart('sourcemap', 3);
