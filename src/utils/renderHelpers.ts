@@ -3,7 +3,6 @@ import MagicString from 'magic-string';
 import { DynamicImportMechanism } from '../Chunk';
 
 export interface RenderOptions {
-	legacy: boolean;
 	freeze: boolean;
 	namespaceToStringTag: boolean;
 	indent: string;

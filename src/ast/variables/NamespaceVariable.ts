@@ -49,19 +49,16 @@ export default class NamespaceVariable extends Variable {
 		const members = Object.keys(this.originals).map(name => {
 			const original = this.originals[name];
 
-			if ((this.referencedEarly || original.isReassigned) && !options.legacy) {
+			if (this.referencedEarly || original.isReassigned) {
 				return `${options.indent}get ${name} () { return ${original.getName()}; }`;
 			}
 
-			if (options.legacy && reservedWords.indexOf(name) !== -1) name = `'${name}'`;
 			return `${options.indent}${name}: ${original.getName()}`;
 		});
 
 		const name = this.getName();
 
-		const callee = options.freeze
-			? `/*#__PURE__*/${options.legacy ? `(Object.freeze || Object)` : `Object.freeze`}`
-			: '';
+		const callee = options.freeze ? `/*#__PURE__*/Object.freeze` : '';
 
 		let output = `${this.context.varOrConst} ${name} = ${
 			options.namespaceToStringTag

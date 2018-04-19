@@ -115,8 +115,7 @@ export default function umd(
 
 	const exportBlock = getExportBlock(exports, dependencies, exportMode);
 	if (exportBlock) magicString.append('\n\n' + exportBlock);
-	if (exportMode === 'named' && options.legacy !== true)
-		magicString.append(`\n\n${esModuleExport}`);
+	if (exportMode === 'named') magicString.append(`\n\n${esModuleExport}`);
 	if (outro) magicString.append(outro);
 
 	return magicString

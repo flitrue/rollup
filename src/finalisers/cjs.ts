@@ -11,9 +11,7 @@ export default function cjs(
 ) {
 	intro =
 		(options.strict === false ? intro : `'use strict';\n\n${intro}`) +
-		(exportMode === 'named' && options.legacy !== true && isEntryModuleFacade
-			? `${esModuleExport}\n\n`
-			: '');
+		(exportMode === 'named' && isEntryModuleFacade ? `${esModuleExport}\n\n` : '');
 
 	let needsInterop = false;
 

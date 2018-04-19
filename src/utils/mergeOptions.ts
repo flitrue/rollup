@@ -10,7 +10,9 @@ const createGetOption = (config: GenericConfigObject, command: GenericConfigObje
 ) =>
 	command[name] !== undefined
 		? command[name]
-		: config[name] !== undefined ? config[name] : defaultValue;
+		: config[name] !== undefined
+			? config[name]
+			: defaultValue;
 
 const normalizeObjectOptionValue = (optionValue: any) => {
 	if (!optionValue) {
@@ -71,7 +73,6 @@ export const commandAliases: { [key: string]: string } = {
 	g: 'globals',
 	h: 'help',
 	i: 'input',
-	l: 'legacy',
 	m: 'sourcemap',
 	n: 'name',
 	o: 'file',
@@ -254,7 +255,6 @@ function getOutputOptions(
 		indent: getOption('indent', true),
 		interop: getOption('interop', true),
 		intro: getOption('intro'),
-		legacy: getOption('legacy', false),
 		name: getOption('name'),
 		namespaceToStringTag: getOption('namespaceToStringTag'),
 		noConflict: getOption('noConflict'),
