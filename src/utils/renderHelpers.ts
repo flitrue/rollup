@@ -3,6 +3,7 @@ import MagicString from 'magic-string';
 import { DynamicImportMechanism } from '../Chunk';
 
 export interface RenderOptions {
+	compact: boolean;
 	legacy: boolean;
 	freeze: boolean;
 	namespaceToStringTag: boolean;

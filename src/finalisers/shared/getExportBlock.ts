@@ -4,6 +4,7 @@ export default function getExportBlock(
 	exports: ChunkExports,
 	dependencies: ChunkDependencies,
 	exportMode: string,
+	compact: boolean,
 	mechanism = 'return'
 ) {
 	if (exportMode === 'default') {
@@ -31,6 +32,8 @@ export default function getExportBlock(
 		return `${mechanism} ${local};`;
 	}
 
+	const _ = compact ? '' : ' ';
+
 	let exportBlock = '';
 
 	// star exports must always output first for precedence
@@ -38,9 +41,8 @@ export default function getExportBlock(
 		if (reexports && exportMode !== 'default') {
 			reexports.forEach(specifier => {
 				if (specifier.reexported === '*') {
-					exportBlock += `${
-						exportBlock ? '\n' : ''
-					}Object.keys(${name}).forEach(function (key) { exports[key] = ${name}[key]; });`;
+					if (!compact && exportBlock) exportBlock += '\n';
+					exportBlock += `Object.keys(${name}).forEach(function${_}(key)${_}{${_}exports[key]${_}=${_}${name}[key];${_}});`;
 				}
 			});
 		}
@@ -59,19 +61,16 @@ export default function getExportBlock(
 							reexports.some(
 								specifier => specifier.imported !== 'default' && specifier.imported !== '*'
 							));
-					if (exportsNamesOrNamespace) {
-						exportBlock += `${exportBlock ? '\n' : ''}exports.${
-							specifier.reexported
-						} = ${name}__default;`;
-					} else {
-						exportBlock += `${exportBlock ? '\n' : ''}exports.${specifier.reexported} = ${name};`;
-					}
+					if (exportBlock && !compact) exportBlock += '\n';
+					if (exportsNamesOrNamespace)
+						exportBlock += `exports.${specifier.reexported}${_}=${_}${name}__default;`;
+					else exportBlock += `exports.${specifier.reexported}${_}=${_}${name};`;
 				} else if (specifier.imported !== '*') {
-					exportBlock += `${exportBlock ? '\n' : ''}exports.${specifier.reexported} = ${name}.${
-						specifier.imported
-					};`;
+					if (exportBlock && !compact) exportBlock += '\n';
+					exportBlock += `exports.${specifier.reexported}${_}=${_}${name}.${specifier.imported};`;
 				} else if (specifier.reexported !== '*') {
-					exportBlock += `${exportBlock ? '\n' : ''}exports.${specifier.reexported} = ${name};`;
+					if (exportBlock && !compact) exportBlock += '\n';
+					exportBlock += `exports.${specifier.reexported}${_}=${_}${name};`;
 				}
 			});
 		}
@@ -83,10 +82,8 @@ export default function getExportBlock(
 		if (lhs === rhs) {
 			return;
 		}
-		if (exportBlock) {
-			exportBlock += '\n';
-		}
-		exportBlock += `${lhs} = ${rhs};`;
+		if (exportBlock && !compact) exportBlock += '\n';
+		exportBlock += `${lhs}${_}=${_}${rhs};`;
 	});
 
 	return exportBlock;
