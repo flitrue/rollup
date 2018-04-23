@@ -36,7 +36,7 @@ export default function cjs(
 					definingVariable = false;
 					importBlock += `require('${id}')`;
 				} else {
-					importBlock += definingVariable ? ',' : `;${varOrConst} `;
+					importBlock += definingVariable ? ',' : `${importBlock ? ';' : ''}${varOrConst} `;
 					definingVariable = true;
 
 					if (!interop || isChunk || !exportsDefault) {
