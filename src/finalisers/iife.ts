@@ -58,8 +58,7 @@ export default function iife(
 
 	if (exportMode !== 'none' && !extend) {
 		wrapperIntro =
-			(isNamespaced ? thisProp(name) : `${graph.varOrConst}${_}${name}`) +
-			`${_}=${_}${wrapperIntro}`;
+			(isNamespaced ? thisProp(name) : `${graph.varOrConst} ${name}`) + `${_}=${_}${wrapperIntro}`;
 	}
 
 	if (isNamespaced) {
