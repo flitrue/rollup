@@ -86,7 +86,7 @@ export default function cjs(
 		dependencies,
 		exportMode,
 		options.compact,
-		`module.exports${_}=`
+		`module.exports${_}=${_}`
 	);
 
 	magicString.prepend(intro);
