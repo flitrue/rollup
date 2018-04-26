@@ -1,5 +1,5 @@
 import { getTimings, initialiseTimers, timeEnd, timeStart } from '../utils/timers';
-import { basename } from '../utils/path';
+import { basename, resolve, dirname } from '../utils/path';
 import { writeFile } from '../utils/fs';
 import { mapSequence } from '../utils/promise';
 import error from '../utils/error';
@@ -168,7 +168,7 @@ export default function rollup(
 						})
 						.then(addons => {
 							chunk.generateInternalExports(outputOptions);
-							chunk.preRender(outputOptions);
+							chunk.preRender(outputOptions, dirname(resolve(inputOptions.input)));
 							return chunk.render(outputOptions, addons);
 						})
 						.then(rendered => {
@@ -316,9 +316,9 @@ export default function rollup(
 
 					const generated: { [chunkName: string]: OutputChunk } = {};
 
-					let preserveModulesBase: string;
-					if (inputOptions.experimentalPreserveModules)
-						preserveModulesBase = commondir(chunks.map(chunk => chunk.entryModule.id));
+					let inputBase = commondir(
+						chunks.filter(chunk => chunk.entryModule).map(chunk => chunk.entryModule.id)
+					);
 					let existingNames = Object.create(null);
 
 					const promise = createAddons(graph, outputOptions)
@@ -334,7 +334,7 @@ export default function rollup(
 											}
 										}
 										for (let chunk of chunks) {
-											chunk.preRender(outputOptions);
+											chunk.preRender(outputOptions, inputBase);
 										}
 										if (!optimized && inputOptions.optimizeChunks) {
 											if (inputOptions.experimentalPreserveModules) {
@@ -344,12 +344,17 @@ export default function rollup(
 														'experimentalPreserveModules does not support the optimizeChunks option.'
 												});
 											}
-											optimizeChunks(chunks, outputOptions, inputOptions.chunkGroupingSize);
+											optimizeChunks(
+												chunks,
+												outputOptions,
+												inputOptions.chunkGroupingSize,
+												inputBase
+											);
 											optimized = true;
 										}
 										for (let chunk of chunks) {
 											if (inputOptions.experimentalPreserveModules) {
-												chunk.generateNamePreserveModules(preserveModulesBase);
+												chunk.generateNamePreserveModules(inputBase);
 											} else {
 												let pattern;
 												if (chunk.isEntryModuleFacade) {
