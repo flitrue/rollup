@@ -1042,8 +1042,9 @@ export default class Chunk {
 				if (options.sourcemap) {
 					timeStart('sourcemap', 3);
 
-					let file = options.file ? options.sourcemapFile || options.file : this.id;
-					if (file) file = resolve(typeof process !== 'undefined' ? process.cwd() : '', file);
+					const file = options.file
+						? options.sourcemapFile || options.file
+						: resolve(options.dir, this.id);
 
 					if (
 						this.graph.hasLoaders ||
